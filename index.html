@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Luxury Footwear HUD Viewer</title>
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            user-select: none;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            /* STYLISH LUXURIOUS BG: Deep Midnight Onyx to Rich Charcoal Vignette */
+            background: radial-gradient(circle, #161a1d 0%, #0b0c10 70%, #050608 100%);
+            overflow: hidden;
+            color: #d4af37; /* Premium Metallic Gold Accent Text */
+        }
+
+        /* Ambient Luxury Gold Mist Particles */
+        .luxury-dust-mist {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            background-image: 
+                radial-gradient(circle, rgba(212, 175, 55, 0.12) 1.5px, transparent 1.5px),
+                radial-gradient(circle, rgba(255, 255, 255, 0.03) 2px, transparent 2px);
+            background-size: 70px 70px;
+            animation: floatingMist 22s linear infinite;
+        }
+
+        @keyframes floatingMist {
+            0% { background-position: 0px 0px; opacity: 0.6; }
+            50% { opacity: 0.9; transform: scale(1.02); }
+            100% { background-position: 70px -140px; opacity: 0.6; }
+        }
+
+        /* Subtle HUD Geometric Grid */
+        .hud-bg-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(212, 175, 55, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(212, 175, 55, 0.02) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* 3D Model Viewer Layout - Fully Optimized */
+        model-viewer {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 2;
+            --poster-color: transparent;
+            will-change: transform;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            transform: translate3d(0,0,0);
+            -webkit-transform: translate3d(0,0,0);
+        }
+
+        /* HUD UI Overlay Container */
+        .hud-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+            pointer-events: none;
+            padding: 35px;
+        }
+
+        .interactive {
+            pointer-events: auto;
+        }
+
+        /* Elegant Minimal Frame Corner Borders */
+        .hud-frame {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            bottom: 20px;
+            border: 1px solid rgba(212, 175, 55, 0.08);
+            pointer-events: none;
+        }
+        .hud-frame::before {
+            content: '';
+            position: absolute;
+            top: -1px; left: -1px; width: 15px; height: 15px;
+            border-top: 2px solid #d4af37; border-left: 2px solid #d4af37;
+        }
+        .hud-frame::after {
+            content: '';
+            position: absolute;
+            bottom: -1px; right: -1px; width: 15px; height: 15px;
+            border-bottom: 2px solid #d4af37; border-right: 2px solid #d4af37;
+        }
+
+        /* Left Controls Sidebar Group */
+        .left-controls-wrapper {
+            position: absolute;
+            top: 35px;
+            left: 35px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 300px;
+        }
+
+        /* Product Details Box - Luxurious Dark Glassmorphism */
+        .product-details {
+            background: rgba(11, 12, 16, 0.75);
+            border-left: 3px solid #d4af37;
+            padding: 24px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            border-top: 1px solid rgba(212, 175, 55, 0.1);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+            border-right: 1px solid rgba(212, 175, 55, 0.1);
+        }
+
+        .hud-header {
+            font-size: 10px;
+            letter-spacing: 2px;
+            color: rgba(212, 175, 55, 0.4);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .detail-row {
+            margin-bottom: 18px;
+        }
+
+        .detail-label {
+            font-size: 10px;
+            color: rgba(212, 175, 55, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 500;
+        }
+
+        .detail-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-top: 3px;
+            min-height: 22px;
+            letter-spacing: -0.3px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+        }
+
+        .price-color {
+            color: #d4af37 !important;
+            text-shadow: 0 0 12px rgba(212, 175, 55, 0.3) !important;
+        }
+
+        .sizes-container {
+            display: flex;
+            gap: 8px;
+            margin-top: 6px;
+        }
+
+        .size-badge {
+            border: 1px solid rgba(212, 175, 55, 0.25);
+            padding: 5px 12px;
+            font-size: 11px;
+            color: #d4af37;
+            background: rgba(212, 175, 55, 0.03);
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+        }
+        
+        .size-badge.show-badge {
+            opacity: 1;
+        }
+
+        .size-badge:hover, .size-badge.selected {
+            border-color: #d4af37;
+            color: #0b0c10;
+            background: #d4af37;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+            font-weight: 600;
+        }
+
+        /* Smooth Floating Recommendation Ribbon */
+        .recommendation-badge {
+            font-size: 10px;
+            letter-spacing: 2px;
+            color: #0b0c10;
+            background: #d4af37;
+            padding: 12px 15px;
+            text-transform: uppercase;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.6s ease-out;
+            font-weight: 600;
+        }
+
+        .recommendation-badge.active-blink {
+            opacity: 1;
+            transform: translateY(0);
+            animation: floatingSoft 2.5s infinite alternate ease-in-out;
+        }
+
+        /* Right Bottom View Controller */
+        .right-bottom-wrapper {
+            position: absolute;
+            bottom: 35px;
+            right: 35px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 15px;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+        }
+
+        .right-bottom-controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            background: rgba(11, 12, 16, 0.6);
+            padding: 12px;
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        .control-title {
+            font-size: 8px;
+            color: rgba(212, 175, 55, 0.4);
+            margin-bottom: 4px;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .dpad-row {
+            display: flex;
+            gap: 6px;
+        }
+
+        .dpad-btn {
+            width: 36px;
+            height: 36px;
+            background: rgba(11, 12, 16, 0.4);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            color: #d4af37;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .dpad-btn:hover {
+            background: #d4af37;
+            color: #0b0c10;
+            border-color: #d4af37;
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+        }
+
+        .pride-statement {
+            font-size: 10px;
+            color: #d4af37;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+            padding-bottom: 5px;
+            max-width: 250px;
+            text-align: right;
+            font-weight: 500;
+        }
+
+        /* Minimalist View in AR Button */
+        .ar-button {
+            position: absolute;
+            top: 35px;
+            right: 35px;
+            background: rgba(11, 12, 16, 0.5);
+            color: #d4af37;
+            border: 1px solid #d4af37;
+            padding: 12px 28px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out, background 0.3s, color 0.3s, box-shadow 0.3s;
+        }
+
+        .ar-button:hover {
+            background: #d4af37;
+            color: #0b0c10;
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.4);
+        }
+
+        /* Holographic Scanning Line */
+        .scan-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.5), transparent);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+            z-index: 4;
+            pointer-events: none;
+            display: none;
+        }
+
+        .scan-line.active {
+            display: block;
+            animation: scanAnim 2.5s ease-in-out 2; 
+        }
+
+        /* Asset Syncing Text Overlay */
+        .scan-status {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 14px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            z-index: 5;
+            pointer-events: none;
+            background: #0b0c10;
+            color: #d4af37;
+            padding: 16px 32px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            display: none;
+            font-weight: 500;
+        }
+
+        @keyframes scanAnim {
+            0% { top: 0%; }
+            50% { top: 100%; }
+            100% { top: 0%; }
+        }
+
+        @keyframes floatingSoft {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-5px); }
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            .hud-overlay { padding: 15px; }
+            .left-controls-wrapper {
+                top: 20px; left: 15px; right: 15px;
+                width: auto; gap: 10px;
+            }
+            .product-details {
+                padding: 16px;
+                border-left: 3px solid #d4af37;
+                border-right: none; border-top: none; border-bottom: none;
+                background: rgba(11, 12, 16, 0.9);
+            }
+            .detail-row { margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+            .detail-label { font-size: 9px; min-width: 65px; }
+            .detail-value { font-size: 15px; margin-top: 0; }
+            .sizes-container { margin-top: 0; gap: 4px; }
+            .size-badge { padding: 3px 8px; font-size: 10px; }
+            .hud-header { margin-bottom: 8px; font-size: 8px; }
+            .recommendation-badge { font-size: 10px; padding: 10px; }
+            
+            .right-bottom-wrapper { display: none !important; }
+
+            .ar-button {
+                position: fixed;
+                top: auto; bottom: 25px; right: 15px; left: 15px;
+                width: calc(100% - 30px); text-align: center; padding: 14px 0;
+                font-size: 12px; z-index: 10;
+                background: #d4af37; color: #0b0c10;
+            }
+            model-viewer { height: 55%; top: 25%; }
+            .scan-status { font-size: 12px; padding: 12px 20px; width: 85%; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="luxury-dust-mist"></div>
+    <div class="hud-bg-grid"></div>
+    <div class="hud-frame"></div>
+
+    <div class="scan-line" id="scanLine"></div>
+    <div class="scan-status" id="scanStatus">SYNCHRONIZING PREMIUM TEXTURES...</div>
+
+    <model-viewer 
+        id="footwearModel"
+        src="Footwear.glb" 
+        alt="Premium Luxury Black Sneakers 3D Interactive Asset" 
+        ar 
+        ar-modes="webxr scene-viewer quick-look" 
+        camera-controls 
+        auto-rotate 
+        interaction-prompt="none"
+        shadow-intensity="1.8"
+        shadow-softness="0.2"
+        exposure="1.2"
+        interpolation-decay="0"
+        powerPreference="high-performance">
+        <button slot="ar-button" id="hiddenArBtn" style="display:none;"></button>
+    </model-viewer>
+
+    <div class="hud-overlay">
+        
+        <button class="ar-button interactive" id="arBtn" onclick="openAR()">
+            View in AR
+        </button>
+
+        <div class="left-controls-wrapper">
+            
+            <div class="product-details">
+                <div class="hud-header" id="headerTitle">// CALIBRATING ENVIRONMENT //</div>
+                
+                <div class="detail-row">
+                    <div class="detail-label">PRODUCT:</div>
+                    <div class="detail-value" id="typeProduct"></div>
+                </div>
+                
+                <div class="detail-row">
+                    <div class="detail-label">STYLE / FINISH:</div>
+                    <div class="detail-value" id="typeColor"></div>
+                </div>
+
+                <div class="detail-row">
+                    <div class="detail-label">PRICE:</div>
+                    <div class="detail-value price-color" id="typePrice"></div>
+                </div>
+                
+                <div class="detail-row">
+                    <div class="detail-label">SIZE (UK):</div>
+                    <div class="sizes-container" id="sizesContainer">
+                        <div class="size-badge interactive" onclick="selectSize(this)">7</div>
+                        <div class="size-badge interactive" onclick="selectSize(this)">8</div>
+                        <div class="size-badge interactive" onclick="selectSize(this)">9</div>
+                        <div class="size-badge interactive" onclick="selectSize(this)">10</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="recommendation-badge" id="recBadge">
+                Highly Recommended Asset
+            </div>
+        </div>
+
+        <div class="right-bottom-wrapper" id="rightWrapper">
+            
+            <div class="right-bottom-controls interactive">
+                <div class="control-title">3D AXIS CONTROLLER</div>
+                <div class="dpad-row">
+                    <div class="dpad-btn" onclick="rotateModel('left')">⟨</div>
+                    <div class="dpad-btn" onclick="rotateModel('right')">⟩</div>
+                </div>
+            </div>
+
+            <div class="pride-statement">
+                PREMIUM SPORTS EDITION
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        const dataToType = [
+            { elementId: 'typeProduct', text: 'STEALTH PRO ATHLETIC' },
+            { elementId: 'typeColor', text: 'Onyx Black & Gold' },
+            { elementId: 'typePrice', text: 'Rs. 14,999' }
+        ];
+
+        const modelViewer = document.getElementById('footwearModel');
+
+        if (modelViewer) {
+            modelViewer.addEventListener('load', () => {
+                modelViewer.queueRender(); 
+            });
+        }
+
+        function rotateModel(direction) {
+            modelViewer.autoRotate = false;
+            const orbits = modelViewer.getCameraOrbit();
+            let currentTheta = orbits.theta * (180 / Math.PI); 
+            
+            if (direction === 'left') {
+                currentTheta -= 35;
+            } else if (direction === 'right') {
+                currentTheta += 35;
+            }
+            
+            modelViewer.cameraOrbit = `${currentTheta}deg ${orbits.phi * (180 / Math.PI)}deg auto`;
+        }
+
+        function typeWriter(elementId, text, speed, callback) {
+            let i = 0;
+            const element = document.getElementById(elementId);
+            element.innerHTML = '';
+            
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                } else if (callback) {
+                    callback();
+                }
+            }
+            type();
+        }
+
+        function selectSize(badge) {
+            document.querySelectorAll('.size-badge').forEach(b => b.classList.remove('selected'));
+            badge.classList.add('selected');
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            typeWriter(dataToType[0].elementId, dataToType[0].text, 50, () => {
+                typeWriter(dataToType[1].elementId, dataToType[1].text, 50, () => {
+                    typeWriter(dataToType[2].elementId, dataToType[2].text, 50, () => {
+                        
+                        const badges = document.querySelectorAll('.size-badge');
+                        badges.forEach((badge, index) => {
+                            setTimeout(() => {
+                                badge.classList.add('show-badge');
+                            }, index * 100);
+                        });
+
+                        document.getElementById('headerTitle').innerText = '// ASSET_ALIGNED //';
+                        setTimeout(startScanningSequence, 1000);
+                    });
+                });
+            });
+        });
+
+        function startScanningSequence() {
+            const scanLine = document.getElementById('scanLine');
+            const scanStatus = document.getElementById('scanStatus');
+            
+            scanLine.classList.add('active');
+            scanStatus.style.display = 'block';
+
+            setTimeout(() => {
+                scanLine.classList.remove('active');
+                scanStatus.style.display = 'none';
+                revealFinalUI();
+            }, 3000);
+        }
+
+        function revealFinalUI() {
+            document.getElementById('recBadge').classList.add('active-blink');
+            document.getElementById('arBtn').style.opacity = '1';
+            document.getElementById('arBtn').style.transform = 'translateY(0)';
+            document.getElementById('rightWrapper').style.opacity = '1';
+        }
+
+        function openAR() {
+            const btn = document.getElementById('arBtn');
+            const nativeBtn = document.getElementById('hiddenArBtn');
+            
+            if (nativeBtn) {
+                btn.innerText = "LAUNCHING AR STREAM...";
+                btn.style.borderColor = "#d4af37";
+                btn.style.color = "#d4af37";
+                nativeBtn.click();
+                
+                setTimeout(() => {
+                    btn.innerText = "View in AR";
+                }, 4000);
+            } else {
+                alert("AR stream initialization failed. Checking device hardware layers.");
+            }
+        }
+    </script>
+</body>
+</html>
